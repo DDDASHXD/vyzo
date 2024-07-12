@@ -1,5 +1,5 @@
 import React from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
 import {
   ChevronDown,
   Command,
@@ -10,21 +10,16 @@ import {
 } from "lucide-react";
 import { Button } from "./button";
 import { Badge } from "./badge";
+import { ApplicationContext } from "@/providers/ApplicationProvider";
+
+import UserDropdown from "./user-dropdown";
 
 const UserMenu = () => {
+  const { user, userLoading } = React.useContext(ApplicationContext);
+
   return (
     <div className="flex flex-col w-full">
-      <div className="flex gap-4 px-3 py-1 items-center hover:bg-black/5 rounded-md cursor-pointer">
-        <Avatar>
-          <AvatarImage src="https://github.com/shadcn.png" />
-          <AvatarFallback>CN</AvatarFallback>
-        </Avatar>
-        <div className="flex flex-col w-full">
-          <p>Sebastian Skov</p>
-          <p className="text-xs text-muted-foreground">skov@skxv.dev</p>
-        </div>
-        <ChevronDown />
-      </div>
+      <UserDropdown />
       <Button
         className="justify-between text-muted-foreground"
         variant={"ghost"}

@@ -3,8 +3,14 @@ import FileBrowser from "@/components/ui/filebrowser";
 import MenuBar from "@/components/ui/menu-bar";
 import Sidebar from "@/components/ui/sidebar";
 import React from "react";
+import { ApplicationContext } from "@/providers/ApplicationProvider";
 
 const Index = () => {
+  const { getUser } = React.useContext(ApplicationContext);
+  React.useEffect(() => {
+    getUser();
+  }, []);
+
   return (
     <div className="w-full flex flex-col h-screen bg-muted">
       <MenuBar />
