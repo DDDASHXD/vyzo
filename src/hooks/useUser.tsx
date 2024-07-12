@@ -80,7 +80,7 @@ const useUser = () => {
 
       setUser(res.data.user);
     } catch (error) {
-      localStorage.setItem("token", "");
+      localStorage.removeItem("token");
       toast.error("An error has ocurred.");
       console.error(error);
       router.push("/login");
@@ -90,7 +90,7 @@ const useUser = () => {
   };
 
   const logout = async () => {
-    localStorage.setItem("token", "");
+    localStorage.removeItem("token");
     toast.success("Successfully logged out");
     router.push("/login");
   };
