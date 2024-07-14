@@ -11,6 +11,7 @@ interface iApplicationContextProps {
   getUser: () => void;
   logout: () => void;
   register: (name: string, email: string, password: string) => void;
+  setUserLoading: (value: boolean) => void;
 }
 
 export const ApplicationContext = React.createContext<iApplicationContextProps>(
@@ -22,11 +23,20 @@ export const ApplicationContext = React.createContext<iApplicationContextProps>(
     getUser: () => {},
     logout: () => {},
     register: (name, email, password) => {},
+    setUserLoading: (value) => {},
   }
 );
 
 export const ApplicationProvider: React.FC = ({ children }) => {
-  const { user, login, register, userLoading, getUser, logout } = useUser();
+  const {
+    user,
+    login,
+    register,
+    userLoading,
+    getUser,
+    logout,
+    setUserLoading,
+  } = useUser();
 
   return (
     <ApplicationContext.Provider
@@ -37,6 +47,7 @@ export const ApplicationProvider: React.FC = ({ children }) => {
         getUser,
         logout,
         register,
+        setUserLoading,
       }}
     >
       {children}

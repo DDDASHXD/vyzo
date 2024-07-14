@@ -15,19 +15,30 @@ import { ApplicationContext } from "@/providers/ApplicationProvider";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useRouter } from "next/router";
 
 const Index = () => {
+  const router = useRouter();
   const [formData, setFormData] = React.useState({
     email: "",
     password: "",
     remember: false,
   });
-  const { login, userLoading } = React.useContext(ApplicationContext);
+  const { login, userLoading, user, getUser } =
+    React.useContext(ApplicationContext);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     login(formData.email.toLowerCase(), formData.password, formData.remember);
   };
+
+  React.useEffect(() => {
+    getUser();
+    if (user) {
+      router.push("/app");
+      console.log(user);
+    }
+  }, [user]);
 
   return (
     <div className="flex flex-col p-10">

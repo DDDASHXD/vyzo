@@ -1,13 +1,13 @@
 import React from "react";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { useRouter } from "next/router";
 import { toast } from "sonner";
 
-interface iUserResponse {
-  user: iUser;
+interface IUserResponse {
+  user: IUser;
 }
 
-export interface iUser {
+export interface IUser {
   _id: string;
   name: string;
   lastName: string;
@@ -15,21 +15,21 @@ export interface iUser {
   activeGroup: string;
 }
 
-interface data {
+interface IData {
   data: {
-    user: iUser;
+    user: IUser;
   };
 }
 
 const useUser = () => {
-  const [user, setUser] = React.useState<iUser | null>(null);
-  const [userLoading, setUserLoading] = React.useState<boolean>(false);
+  const [user, setUser] = React.useState<IUser | null>(null);
+  const [userLoading, setUserLoading] = React.useState(false);
   const router = useRouter();
 
   const login = async (email: string, password: string, remember: boolean) => {
     setUserLoading(true);
     try {
-      const res = await axios.post("/api/auth/login", {
+      const res = await axios.post<{ token: string }>("/api/auth/login", {
         email,
         password,
         remember,
@@ -42,10 +42,11 @@ const useUser = () => {
     } catch (err: any) {
       console.error(err);
 
-      if (err.response.status == 400) {
+      if (err instanceof AxiosError && err?.response?.status == 400) {
         toast.error("Invalid credentials");
         return;
       }
+
       toast.error("An error has ocurred");
     } finally {
       setUserLoading(false);
@@ -55,7 +56,7 @@ const useUser = () => {
   const register = async (name: string, email: string, password: string) => {
     setUserLoading(true);
     try {
-      const res = await axios.post("/api/auth/register", {
+      await axios.post("/api/auth/register", {
         name,
         email,
         password,
@@ -74,7 +75,7 @@ const useUser = () => {
   const getUser = async () => {
     setUserLoading(true);
     try {
-      const res: data = await axios.post("/api/auth/getUser", {
+      const res: IData = await axios.post("/api/auth/getUser", {
         token: localStorage.getItem("token"),
       });
 
@@ -95,7 +96,15 @@ const useUser = () => {
     router.push("/login");
   };
 
-  return { user, login, register, userLoading, getUser, logout };
+  return {
+    user,
+    login,
+    register,
+    userLoading,
+    getUser,
+    logout,
+    setUserLoading,
+  };
 };
 
 export default useUser;
