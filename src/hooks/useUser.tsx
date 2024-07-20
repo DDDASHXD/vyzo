@@ -29,11 +29,14 @@ const useUser = () => {
   const login = async (email: string, password: string, remember: boolean) => {
     setUserLoading(true);
     try {
-      const res = await axios.post<{ token: string }>("/api/auth/login", {
-        email,
-        password,
-        remember,
-      });
+      const res = await axios.post<{ token: string }>(
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
+        {
+          email,
+          password,
+          remember,
+        }
+      );
       if (res.data.token) {
         localStorage.setItem("token", res.data.token);
         toast.success("Welcome back!");
@@ -56,7 +59,7 @@ const useUser = () => {
   const register = async (name: string, email: string, password: string) => {
     setUserLoading(true);
     try {
-      await axios.post("/api/auth/register", {
+      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/register`, {
         name,
         email,
         password,
@@ -75,9 +78,12 @@ const useUser = () => {
   const getUser = async () => {
     setUserLoading(true);
     try {
-      const res: IData = await axios.post("/api/auth/getUser", {
-        token: localStorage.getItem("token"),
-      });
+      const res: IData = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/user`,
+        {
+          token: localStorage.getItem("token"),
+        }
+      );
 
       setUser(res.data.user);
     } catch (error) {
