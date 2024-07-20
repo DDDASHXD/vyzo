@@ -24,8 +24,7 @@ const Index = () => {
     password: "",
     remember: false,
   });
-  const { login, userLoading, user, getUser } =
-    React.useContext(ApplicationContext);
+  const { login, userLoading, user } = React.useContext(ApplicationContext);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -33,8 +32,8 @@ const Index = () => {
   };
 
   React.useEffect(() => {
-    getUser();
-    if (user) {
+    const token = localStorage.getItem("token");
+    if (token) {
       router.push("/app");
       console.log(user);
     }
