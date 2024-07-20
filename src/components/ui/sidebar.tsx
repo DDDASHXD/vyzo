@@ -2,7 +2,24 @@
 import React from "react";
 import UserMenu from "./user-menu";
 import { Button } from "./button";
-import { File, FolderClosed, FolderOpen } from "lucide-react";
+import {
+  File,
+  FolderClosed,
+  FolderOpen,
+  FolderPlusIcon,
+  PlusCircle,
+} from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Input } from "./input";
+import { cn } from "@/lib/utils";
+import axios from "axios";
+import { ApplicationContext } from "@/providers/ApplicationProvider";
+import Folder from "./folder";
 
 interface iFiles {
   name: string;
@@ -20,138 +37,93 @@ interface iFolders {
   files?: iFiles[];
 }
 
-export const structure = [
-  {
-    name: "Work",
-    icon: FolderClosed,
-    favorite: true,
-  },
-  {
-    name: "School",
-    icon: FolderClosed,
-  },
-  {
-    name: "Getting Started",
-    icon: FolderOpen,
-    subfolders: [
-      {
-        name: "Documentation",
-        icon: FolderOpen,
-        subfolders: [
-          {
-            name: "Vyzo",
-            icon: FolderOpen,
-            active: true,
-            files: [
-              {
-                name: "Editor",
-                icon: File,
-              },
-              {
-                name: "Commands",
-                icon: File,
-              },
-              {
-                name: "Searching",
-                icon: File,
-              },
-              {
-                name: "🚀 Welcome to Vyzo!",
-                icon: File,
-                active: true,
-                favorite: true,
-              },
-              {
-                name: "Organizing",
-                icon: File,
-              },
-            ],
-          },
-        ],
-      },
-    ],
-  },
-  {
-    name: "Projects",
-    icon: FolderClosed,
-  },
-  {
-    name: "Braindump",
-    icon: FolderClosed,
-    favorite: true,
-  },
-];
-
-const renderFolders = (folders, indent = 17) => {
-  return folders.map((folder, index) => {
-    return (
-      <React.Fragment key={index}>
-        <Button
-          className="justify-start hover:bg-background/50"
-          variant={folder.active ? "outline" : "ghost"}
-          style={{ paddingLeft: `${indent}px` }}
-        >
-          <folder.icon />
-          <span className="ml-2">{folder.name}</span>
-        </Button>
-        {folder.subfolders && renderFolders(folder.subfolders, indent + 15)}
-      </React.Fragment>
-    );
-  });
-};
-
 const Sidebar = () => {
+  const [createFolder, setCreateFolder] = React.useState({
+    active: false,
+    name: "",
+  });
+  const createFolderRef = React.useRef(null);
+  const { newFolder, folders, getFolders } =
+    React.useContext(ApplicationContext);
+
+  const handleKeyDown = async (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      const value = createFolder.name;
+      createFolderRef.current.blur();
+
+      console.log(value);
+      newFolder(value, "/");
+    }
+
+    if (e.key === "Escape") {
+      e.preventDefault();
+      createFolderRef.current.blur();
+    }
+  };
+
+  React.useEffect(() => {
+    if (createFolder.active) {
+      createFolderRef.current.focus();
+    }
+  }, [createFolder]);
+
+  React.useEffect(() => {
+    getFolders();
+  }, []);
   return (
-    <div className="flex flex-col items-center min-w-80 h-full max-h-screen p-1 gap-10">
+    <div className="flex flex-col items-center min-w-80 h-full max-h-screen p-1 gap-5">
       <UserMenu />
 
       <div className="flex flex-col w-full">
-        <p className="text-xs text-muted-foreground ml-3">Favorites</p>
-        {/* Go through the whole structure and find all favorite folders and files */}
-        {structure.map((folder, index) => {
-          if (folder.favorite) {
-            return (
-              <Button className="justify-start" variant="ghost" key={index}>
-                <folder.icon />
-                <span className="ml-2">{folder.name}</span>
-              </Button>
-            );
-          }
-          if (folder.subfolders) {
-            return folder.subfolders.map((subfolder, index) => {
-              if (subfolder.favorite) {
-                return (
-                  <Button className="justify-start" variant="ghost" key={index}>
-                    <subfolder.icon />
-                    <span className="ml-2">{subfolder.name}</span>
-                  </Button>
-                );
-              }
-              if (subfolder.files) {
-                return subfolder.files.map((file, index) => {
-                  if (file.favorite) {
-                    return (
-                      <Button
-                        className="justify-start"
-                        variant="ghost"
-                        key={index}
-                      >
-                        <file.icon />
-                        <span className="ml-2">{file.name}</span>
-                      </Button>
-                    );
+        <p className="text-xs text-muted-foreground ml-3 pr-4 flex w-full justify-between">
+          Your Library
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <PlusCircle
+                  size={14}
+                  className="cursor-pointer hover:text-foreground"
+                  onClick={() =>
+                    setCreateFolder({ ...createFolder, active: true })
                   }
-                });
-              }
-            });
-          }
-        })}
-      </div>
-
-      <div className="flex flex-col w-full">
-        <p className="text-xs text-muted-foreground ml-3">Your Library</p>
+                />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>New folder</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </p>
         {/* Go through the whole structure and find all folders and subfolders */}
-        {renderFolders(structure)}
+        <Button
+          className={cn("justify-start hover:bg-background/50 relative", {
+            hidden: !createFolder.active,
+          })}
+          variant={"outline"}
+        >
+          <FolderPlusIcon />
+          <Input
+            type="text"
+            className="h-max border-none focus-visible:ring-transparent bg-transparent"
+            onBlur={() => setCreateFolder({ name: "", active: false })}
+            onChange={(e) =>
+              setCreateFolder({ ...createFolder, name: e.target.value })
+            }
+            value={createFolder.name}
+            ref={createFolderRef}
+            maxLength={20}
+            onKeyDown={(e) => handleKeyDown(e)}
+          />
+          <p className="text-xs text-muted-foreground absolute my-auto right-3 pointer-events-none">
+            Press enter
+          </p>
+        </Button>
+        {folders
+          .filter((folder) => folder.parent === null)
+          .map((folder) => (
+            <Folder folder={folder} indent={15} />
+          ))}
       </div>
 
       <div className="flex flex-col w-full">
