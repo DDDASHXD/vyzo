@@ -24,39 +24,21 @@ const UserMenu = () => {
         className="justify-between text-muted-foreground"
         variant={"ghost"}
       >
-        <div className="flex gap-2 items-center">
-          <Search />
+        <div className="flex gap-2 items-center text-sm">
+          <Search size="20" />
           Search
         </div>
-        <Badge className="gap-1 bg-background" variant="outline">
-          <Command size="12" />K
+        <Badge className="gap-1 bg-background text-xs" variant="outline">
+          <Command size="10" />K
         </Badge>
       </Button>
       <Button
-        className="justify-between text-muted-foreground"
+        className="justify-between text-muted-foreground text-sm"
         variant={"ghost"}
       >
-        <div className="flex gap-2 items-center">
-          <Inbox />
-          Inbox
-        </div>
-      </Button>
-      <Button
-        className="justify-between text-muted-foreground"
-        variant={"ghost"}
-      >
-        <div className="flex gap-2 items-center">
-          <Settings />
+        <div className="flex gap-2 items-center text-sm">
+          <Settings size="20" />
           Settings
-        </div>
-      </Button>
-      <Button
-        className="justify-between text-muted-foreground"
-        variant={"ghost"}
-      >
-        <div className="flex gap-2 items-center">
-          <PlusCircle />
-          New Folder
         </div>
       </Button>
     </div>
