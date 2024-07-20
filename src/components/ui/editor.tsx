@@ -16,27 +16,69 @@ import {
 } from "lucide-react";
 import { EditorContent } from "@tiptap/react";
 import { useEditor } from "@/hooks/useEditor";
+import { ApplicationContext } from "@/providers/ApplicationProvider";
+import { useDebouncedState } from "@mantine/hooks";
+import axios from "axios";
+import { toast } from "sonner";
 
 const Editor = () => {
-  const defaultContent = `<h1>🚀 Welcome to Vyzo!</h1><p>Vyzo is a brain organizing and note taking tool, helping you focus only on what you need.</p><p>This includes:</p><ul><li><p>An easy to learn markdown editor</p></li><li><p>Extensive search capabilities</p></li><li><p>Code bases</p></li><li><p>Interactive code editors</p></li><li><p>Easy linking between files</p></li><li><p>Note taking on powerpoints and PDF's</p></li><li><p>Easy-to-learn markdown wysiwyg shortcuts</p><ul><li><p>And exporting to markdown, pdf and plain html!</p></li></ul></li><li><p>And much, much more!</p></li></ul>`;
+  const { currentFile } = React.useContext(ApplicationContext);
+  const [content, setContent] = useDebouncedState("", 200);
+  const defaultContent =
+    currentFile && currentFile.content ? currentFile.content : "";
 
-  const editor = useEditor({
-    defaultContent,
+  let editor = useEditor({
+    defaultContent:
+      currentFile && currentFile.content ? currentFile.content : "",
+    onUpdate: async (editor) => {
+      setContent(editor.getHTML());
+    },
   });
 
+  const update = async () => {
+    try {
+      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/files/edit`, {
+        token: localStorage.getItem("token"),
+        id: currentFile?._id,
+        content: content,
+      });
+    } catch (error) {
+      console.log(error);
+      toast.error("Error!!!!");
+    }
+  };
+
+  React.useEffect(() => {
+    if (content) {
+      update();
+    }
+  }, [content]);
+
+  React.useEffect(() => {
+    if (editor && currentFile) {
+      editor.commands.setContent(currentFile.content!);
+    }
+  }, [currentFile]);
+
   return (
-    <div className="flex flex-col h-full overflow-scroll">
-      <div className="flex justify-between border-b border-b-border py-1 px-5">
-        <div className="flex gap-10">
+    <div className="flex flex-col h-full overflow-scroll relative">
+      <div
+        className="flex justify-between border border-border py-1 px-5 w-max left-1/2 -translate-x-1/2 rounded-full shadow-sm"
+        style={{
+          bottom: "15px",
+          position: "absolute",
+        }}
+      >
+        <div className="flex gap-5">
           <ToggleGroup type="multiple" className="gap-0">
             <ToggleGroupItem value="bold" aria-label="Toggle bold">
-              <Bold className="h-4 w-4" />
+              <Bold className="size-3" />
             </ToggleGroupItem>
             <ToggleGroupItem value="italic" aria-label="Toggle italic">
-              <Italic className="h-4 w-4" />
+              <Italic className="size-3" />
             </ToggleGroupItem>
             <ToggleGroupItem value="underline" aria-label="Toggle underline">
-              <Underline className="h-4 w-4" />
+              <Underline className="size-3" />
             </ToggleGroupItem>
           </ToggleGroup>
 
@@ -46,37 +88,37 @@ const Editor = () => {
               value="left"
               aria-label="Toggle bold"
             >
-              <AlignLeft className="h-4 w-4" />
+              <AlignLeft className="size-3" />
             </ToggleGroupItem>
             <ToggleGroupItem value="center" aria-label="Toggle italic">
-              <AlignCenter className="h-4 w-4" />
+              <AlignCenter className="size-3" />
             </ToggleGroupItem>
             <ToggleGroupItem value="right" aria-label="Toggle underline">
-              <AlignRight className="h-4 w-4" />
+              <AlignRight className="size-3" />
             </ToggleGroupItem>
             <ToggleGroupItem value="justify" aria-label="Toggle underline">
-              <AlignJustify className="h-4 w-4" />
+              <AlignJustify className="size-3" />
             </ToggleGroupItem>
           </ToggleGroup>
 
           <ToggleGroup type="single" className="gap-0">
             <ToggleGroupItem value="ul" aria-label="Toggle bold">
-              <List className="h-4 w-4" />
+              <List className="size-3" />
             </ToggleGroupItem>
             <ToggleGroupItem value="ol" aria-label="Toggle italic">
-              <ListOrderedIcon className="h-4 w-4" />
+              <ListOrderedIcon className="size-3" />
             </ToggleGroupItem>
             <ToggleGroupItem value="cl" aria-label="Toggle underline">
-              <ListChecks className="h-4 w-4" />
+              <ListChecks className="size-3" />
             </ToggleGroupItem>
           </ToggleGroup>
 
           <ToggleGroup type="single" className="gap-0">
             <ToggleGroupItem value="bold" aria-label="Toggle bold">
-              <Indent className="h-4 w-4" />
+              <Indent className="size-3" />
             </ToggleGroupItem>
             <ToggleGroupItem value="italic" aria-label="Toggle italic">
-              <IndentDecrease className="h-4 w-4" />
+              <IndentDecrease className="size-3" />
             </ToggleGroupItem>
           </ToggleGroup>
         </div>

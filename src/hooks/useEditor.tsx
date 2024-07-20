@@ -5,9 +5,10 @@ import { Markdown } from "tiptap-markdown";
 
 interface IProps {
   defaultContent?: string;
+  onUpdate?: (e: any) => void;
 }
 
-const useEditor = ({ defaultContent }: IProps) => {
+const useEditor = ({ defaultContent, onUpdate }: IProps) => {
   const editor = useTipTapEditor({
     onUpdate: ({ editor }) => {
       console.log(
@@ -17,6 +18,10 @@ const useEditor = ({ defaultContent }: IProps) => {
       console.log(
         `New editor markdown (not sure why you want this):\n ${editor.storage.markdown.getMarkdown()}`
       );
+
+      if (onUpdate) {
+        onUpdate(editor);
+      }
     },
     extensions: [
       StarterKit.configure({
