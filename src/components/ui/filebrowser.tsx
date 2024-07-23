@@ -55,36 +55,8 @@ const FileBrowser = () => {
   return (
     <ContextMenu>
       <ContextMenuTrigger asChild>
-        <div className="flex flex-col p-5 pt-3 bg-muted/40 border-b border-b-border gap-4">
-          <Breadcrumb>
-            <BreadcrumbList>
-              <BreadcrumbItem>
-                <BreadcrumbLink className="flex gap-2 items-center" href="/">
-                  <FolderOpen size="16" /> Getting Started
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbLink className="flex gap-2 items-center" href="/">
-                  <FolderOpen size="16" /> Documentation
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbLink className="flex gap-2 items-center" href="/">
-                  <FolderOpen size="16" /> Vyzo
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbLink className="flex gap-2 items-center" href="/">
-                  <File size="16" /> 🚀 Welcome to Vyzo!
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
-
-          <div className="flex flex-col w-full">
+        <div className="flex flex-col p-5 pt-3 bg-muted/40 gap-4 h-full overflow-y-auto">
+          <div className="flex flex-col w-full h-full">
             {files.map((file: iFile, index: number) => (
               // Every second file should have a different background color
               <FileComp

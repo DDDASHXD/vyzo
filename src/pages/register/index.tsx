@@ -126,7 +126,7 @@ const Index = () => {
               )}
             </div>
             <Button type="submit" disabled={userLoading}>
-              {userLoading ? <Loader2 className="animate-spin" /> : "Login"}
+              {userLoading ? <Loader2 className="animate-spin" /> : "Register"}
             </Button>
           </form>
           <p className="text-sm text-muted-foreground">

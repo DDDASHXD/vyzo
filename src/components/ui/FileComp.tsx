@@ -26,7 +26,7 @@ const FileComp = ({ index, file, currentFolder }: iFileCompProps) => {
       <ContextMenuTrigger asChild>
         <Button
           className={cn(
-            "justify-start hover:bg-background py-2 h-max border border-transparent",
+            "justify-start hover:bg-background py-2 h-max border border-transparent select-none",
             {
               "bg-muted-foreground/5": index % 2 === 0,
               "bg-background border-border": file._id === currentFile?._id,
@@ -41,9 +41,6 @@ const FileComp = ({ index, file, currentFolder }: iFileCompProps) => {
         </Button>
       </ContextMenuTrigger>
       <ContextMenuContent>
-        <ContextMenuItem className="gap-2">
-          <FolderIcon size="14" /> New Folder
-        </ContextMenuItem>
         <ContextMenuItem className="gap-2 ">
           <File size="14" />
           New File

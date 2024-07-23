@@ -4,6 +4,7 @@ import {
   ChevronDown,
   Command,
   Inbox,
+  Moon,
   PlusCircle,
   Search,
   Settings,
@@ -13,6 +14,7 @@ import { Badge } from "./badge";
 import { ApplicationContext } from "@/providers/ApplicationProvider";
 
 import UserDropdown from "./user-dropdown";
+import DarkmodeSwitch from "./darkmode-switch";
 
 const UserMenu = () => {
   const { user, userLoading } = React.useContext(ApplicationContext);
@@ -41,6 +43,13 @@ const UserMenu = () => {
           Settings
         </div>
       </Button>
+      <div className="flex justify-between text-muted-foreground text-sm px-4 py-2">
+        <div className="flex gap-2 items-center text-sm">
+          <Moon size="20" />
+          Dark mode
+        </div>
+        <DarkmodeSwitch />
+      </div>
     </div>
   );
 };

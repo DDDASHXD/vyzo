@@ -20,6 +20,7 @@ import { cn } from "@/lib/utils";
 import axios from "axios";
 import { ApplicationContext } from "@/providers/ApplicationProvider";
 import Folder from "./folder";
+import { Droppable } from "react-beautiful-dnd";
 
 interface iFiles {
   name: string;
@@ -119,11 +120,39 @@ const Sidebar = () => {
             Press enter
           </p>
         </Button>
-        {folders
-          .filter((folder) => folder.parent === null)
-          .map((folder) => (
-            <Folder folder={folder} indent={15} />
-          ))}
+        <Droppable droppableId="folders">
+          {(provided, snapshot) => (
+            <div
+              {...provided.droppableProps}
+              ref={provided.innerRef}
+              className="flex flex-col"
+            >
+              {folders
+                .filter((folder) => folder.parent === null)
+                .map((folder, index) => (
+                  <Folder
+                    key={folder._id} // Make sure each key is unique
+                    folder={folder}
+                    indent={15}
+                    index={index}
+                  />
+                ))}
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
+        <Droppable droppableId="folders2">
+          {(provided, snapshot) => (
+            <div
+              {...provided.droppableProps}
+              ref={provided.innerRef}
+              className="flex flex-col"
+            >
+              agag
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
       </div>
 
       <div className="flex flex-col w-full">

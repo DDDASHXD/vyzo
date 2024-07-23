@@ -4,6 +4,11 @@ import MenuBar from "@/components/ui/menu-bar";
 import Sidebar from "@/components/ui/sidebar";
 import React from "react";
 import { ApplicationContext } from "@/providers/ApplicationProvider";
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "@/components/ui/resizable";
 
 const Index = () => {
   const { getUser } = React.useContext(ApplicationContext);
@@ -16,10 +21,22 @@ const Index = () => {
       <MenuBar />
       <div className="flex h-full">
         <Sidebar />
-        <div className="flex flex-col h-full w-full bg-background border-t border-t-border border-l border-l-border rounded-tl-3xl overflow-hidden">
-          <FileBrowser />
-          <Editor />
-        </div>
+        <ResizablePanelGroup
+          direction="vertical"
+          className="flex flex-col h-full w-full bg-background border-t border-t-border border-l border-l-border rounded-tl-3xl overflow-hidden"
+        >
+          <ResizablePanel
+            className="min-h-[100px] max-h-[300px]"
+            defaultSize={10}
+            onResize={(e) => console.log(e)}
+          >
+            <FileBrowser />
+          </ResizablePanel>
+          <ResizableHandle />
+          <ResizablePanel>
+            <Editor />
+          </ResizablePanel>
+        </ResizablePanelGroup>
       </div>
     </div>
   );
