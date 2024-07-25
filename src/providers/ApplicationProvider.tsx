@@ -6,6 +6,8 @@ import useFolders from "@/hooks/useFolders";
 import useFiles from "@/hooks/useFiles";
 import type { iFolder } from "@/hooks/useFolders";
 import { iFile } from "@/hooks/useFiles";
+import UseDND from "@/hooks/UseDND";
+import { iDragProps } from "@/hooks/UseDND";
 
 interface iApplicationContextProps {
   user: any;
@@ -24,6 +26,7 @@ interface iApplicationContextProps {
   renameFolder: (id: string, value: string) => void;
   setCurrentFolder: (id: string | null) => void;
   currentFolder: string | null;
+  setFolders: (folders: iFolder[]) => void;
 
   getFiles: (currentFolder: string) => void;
   newFile: (name: string, parent: string) => void;
@@ -31,6 +34,10 @@ interface iApplicationContextProps {
   files: iFile[];
   setCurrentFile: iFile | null;
   currentFile: iFile | null;
+
+  beginDrag: (e: any, props: iDragProps) => void;
+  dragged: iFile | iFolder | null;
+  dragging: boolean;
 }
 
 export const ApplicationContext = React.createContext<iApplicationContextProps>(
@@ -51,6 +58,7 @@ export const ApplicationContext = React.createContext<iApplicationContextProps>(
     renameFolder: (id, value) => {},
     setCurrentFolder: (id) => {},
     currentFolder: null,
+    setFolders: (folders) => {},
 
     getFiles: (currentFolder) => {},
     newFile: (name, parent) => {},
@@ -58,6 +66,10 @@ export const ApplicationContext = React.createContext<iApplicationContextProps>(
     files: null,
     setCurrentFile: (file) => {},
     currentFile: null,
+
+    beginDrag: (e, props) => {},
+    dragged: null,
+    dragging: null,
   }
 );
 
@@ -80,7 +92,10 @@ export const ApplicationProvider: React.FC = ({ children }) => {
     renameFolder,
     setCurrentFolder,
     currentFolder,
+    setFolders,
   } = useFolders();
+
+  const { beginDrag, dragged, dragging } = UseDND();
 
   const { getFiles, newFile, deleteFile, files, currentFile, setCurrentFile } =
     useFiles();
@@ -103,6 +118,7 @@ export const ApplicationProvider: React.FC = ({ children }) => {
         renameFolder,
         setCurrentFolder,
         currentFolder,
+        setFolders,
 
         getFiles,
         newFile,
@@ -110,6 +126,10 @@ export const ApplicationProvider: React.FC = ({ children }) => {
         setCurrentFile,
         files,
         currentFile,
+
+        beginDrag,
+        dragged,
+        dragging,
       }}
     >
       {children}

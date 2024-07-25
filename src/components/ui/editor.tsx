@@ -24,6 +24,7 @@ import axios from "axios";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { Toggle } from "@/components/ui/toggle";
+import { Button } from "./button";
 
 const Editor = () => {
   const { currentFile, getFiles, currentFolder } =
@@ -88,7 +89,7 @@ const Editor = () => {
           variant="outline"
           pressed={formatMenuPin}
           onClick={() => setFormatMenuPin(!formatMenuPin)}
-          className={cn("transition-all", {
+          className={cn("transition-all z-10", {
             "opacity-0": !formatMenuActive,
           })}
         >
@@ -97,7 +98,7 @@ const Editor = () => {
       </div>
       <div
         className={cn(
-          "flex justify-between border border-border py-1 px-5 w-max left-1/2 -translate-x-1/2 rounded-full shadow-sm transition-all",
+          "flex justify-between border border-border py-1 px-5 w-max left-1/2 -translate-x-1/2 rounded-full shadow-sm transition-all bg-background z-10",
           {
             "translate-y-1/2 opacity-0": !formatMenuActive,
           }
@@ -233,6 +234,13 @@ const Editor = () => {
               <IndentDecrease className="size-3" />
             </ToggleGroupItem>
           </ToggleGroup>
+
+          <Button
+            onClick={() => console.log(editor?.getHTML())}
+            variant={"secondary"}
+          >
+            Export
+          </Button>
         </div>
       </div>
       <div className="flex h-full overflow-scroll p-5">

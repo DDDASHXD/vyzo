@@ -45,6 +45,7 @@
     "mongoose": "^8.5.0",
     "next": "14.2.1",
     "next-themes": "^0.3.0",
+    "primereact": "^10.7.0",
     "prismjs": "^1.29.0",
     "react": "^18",
     "react-beautiful-dnd": "^13.1.1",

@@ -7,9 +7,12 @@ import { ApplicationProvider } from "@/providers/ApplicationProvider";
 import Update from "./update";
 import { ThemeProvider } from "@/providers/theme-provider";
 import { DragDropContext } from "react-beautiful-dnd";
+import { ApplicationContext } from "@/providers/ApplicationProvider";
+import React from "react";
 
 export default function App({ Component, pageProps }: AppProps) {
   const handleOnDragEnd = (result) => {};
+  const { dragging, dragged } = React.useContext(ApplicationContext);
 
   return (
     <>

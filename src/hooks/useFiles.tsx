@@ -19,6 +19,7 @@ export interface iFile {
   content?: string;
   tags?: iTag[];
   optimistic?: boolean;
+  type?: string;
 }
 
 const useFiles = () => {

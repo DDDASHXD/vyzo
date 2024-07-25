@@ -21,6 +21,7 @@ import axios from "axios";
 import { ApplicationContext } from "@/providers/ApplicationProvider";
 import Folder from "./folder";
 import { Droppable } from "react-beautiful-dnd";
+import SidebarDropzone from "./sidebar-dropzone";
 
 interface iFiles {
   name: string;
@@ -44,7 +45,7 @@ const Sidebar = () => {
     name: "",
   });
   const createFolderRef = React.useRef(null);
-  const { newFolder, folders, getFolders } =
+  const { newFolder, folders, getFolders, dragged, dragging } =
     React.useContext(ApplicationContext);
 
   const handleKeyDown = async (e) => {
@@ -72,6 +73,7 @@ const Sidebar = () => {
   React.useEffect(() => {
     getFolders();
   }, []);
+
   return (
     <div className="flex flex-col items-center min-w-80 h-full max-h-screen p-1 gap-5">
       <UserMenu />
@@ -120,39 +122,18 @@ const Sidebar = () => {
             Press enter
           </p>
         </Button>
-        <Droppable droppableId="folders">
-          {(provided, snapshot) => (
-            <div
-              {...provided.droppableProps}
-              ref={provided.innerRef}
-              className="flex flex-col"
-            >
-              {folders
-                .filter((folder) => folder.parent === null)
-                .map((folder, index) => (
-                  <Folder
-                    key={folder._id} // Make sure each key is unique
-                    folder={folder}
-                    indent={15}
-                    index={index}
-                  />
-                ))}
-              {provided.placeholder}
-            </div>
-          )}
-        </Droppable>
-        <Droppable droppableId="folders2">
-          {(provided, snapshot) => (
-            <div
-              {...provided.droppableProps}
-              ref={provided.innerRef}
-              className="flex flex-col"
-            >
-              agag
-              {provided.placeholder}
-            </div>
-          )}
-        </Droppable>
+        {folders
+          .filter((folder) => folder.parent === null)
+          .map((folder, index) => (
+            <Folder
+              key={folder._id} // Make sure each key is unique
+              folder={folder}
+              indent={15}
+              index={index}
+            />
+          ))}
+        {/* Folder dropzone */}
+        <SidebarDropzone />
       </div>
 
       <div className="flex flex-col w-full">

@@ -10,6 +10,7 @@ export interface iFolder {
   optimistic?: boolean;
   active?: boolean;
   parent?: string | null;
+  type?: string;
 }
 
 const useFolders = () => {
@@ -105,6 +106,7 @@ const useFolders = () => {
     renameFolder,
     currentFolder,
     setCurrentFolder,
+    setFolders,
   };
 };
 

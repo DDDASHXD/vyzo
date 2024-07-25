@@ -122,8 +122,8 @@
   }
 
   code {
-    background-color: rgba(#616161, 0.1) !important;
     color: #616161 !important;
+    @apply bg-muted text-muted-foreground px-1 py-[1px] mb-40 rounded-md relative -translate-y-5;
   }
 
   pre {
@@ -170,6 +170,7 @@
       color: inherit;
       font-size: 0.8rem;
       padding: 0;
+      background: red;
     }
 
     /* Code styling */
