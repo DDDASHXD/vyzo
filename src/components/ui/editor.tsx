@@ -25,6 +25,7 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { Toggle } from "@/components/ui/toggle";
 import { Button } from "./button";
+import { ContentItemMenu } from "../menus/ContentItemMenu/ContentItemMenu";
 
 const Editor = () => {
   const { currentFile, getFiles, currentFolder } =
@@ -243,8 +244,9 @@ const Editor = () => {
           </Button>
         </div>
       </div>
-      <div className="flex h-full overflow-scroll p-5">
+      <div className="flex h-full overflow-scroll p-5 pl-20">
         <EditorContent editor={editor} className="w-full" />
+        {editor && <ContentItemMenu editor={editor} />}
       </div>
     </div>
   );
