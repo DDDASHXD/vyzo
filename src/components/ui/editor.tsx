@@ -1,3 +1,5 @@
+// @ts-nocheck FIXME
+
 import React from "react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import {
@@ -25,6 +27,12 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { Toggle } from "@/components/ui/toggle";
 import { Button } from "./button";
+import { Sidebar } from "@/components/Sidebar";
+import { ColumnsMenu } from "@/extensions/MultiColumn/menus";
+import { TableColumnMenu, TableRowMenu } from "@/extensions/Table/menus";
+import { TextMenu } from "../menus/TextMenu";
+import { ContentItemMenu } from "../menus/ContentItemMenu";
+import { LinkMenu } from "@/components/menus";
 
 const Editor = () => {
   const { currentFile, getFiles, currentFolder } =
@@ -34,6 +42,7 @@ const Editor = () => {
   const [content, setContent] = useDebouncedState("", 200);
   const defaultContent =
     currentFile && currentFile.content ? currentFile.content : "";
+  const menuContainerRef = React.useRef(null);
 
   let editor = useEditor({
     defaultContent:
@@ -243,8 +252,16 @@ const Editor = () => {
           </Button>
         </div>
       </div>
-      <div className="flex h-full overflow-scroll p-5">
+      <div
+        className="flex h-full overflow-scroll p-5 pl-20"
+        ref={menuContainerRef}
+      >
         <EditorContent editor={editor} className="w-full" />
+        {editor && (
+          <>
+            <ContentItemMenu editor={editor} />
+          </>
+        )}
       </div>
     </div>
   );

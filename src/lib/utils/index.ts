@@ -9,7 +9,7 @@ export function randomElement(array: Array<any>) {
   return array[Math.floor(Math.random() * array.length)];
 }
 
-export * from "./utils/cssVar";
-export * from "./utils/getRenderContainer";
-export * from "./utils/isCustomNodeSelected";
-export * from "./utils/isTextSelected";
+export * from "./cssVar";
+export * from "./getRenderContainer";
+export * from "./isCustomNodeSelected";
+export * from "./isTextSelected";

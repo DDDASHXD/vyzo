@@ -1,14 +1,21 @@
-import { useEditor as useTipTapEditor } from "@tiptap/react";
-import ExtensionKit from "@/extensions/extension-kit";
+import { Editor, useEditor } from "@tiptap/react";
+import { ExtensionKit } from "@/extensions/extension-kit";
+
+declare global {
+  interface Window {
+    editor: Editor | null;
+  }
+}
 
 interface IProps {
   defaultContent?: string;
   onUpdate?: (e: any) => void;
 }
 
-const useEditor = ({ defaultContent, onUpdate }: IProps) => {
-  const editor = useTipTapEditor({
+export const useBlockEditor = ({ defaultContent, onUpdate }: IProps) => {
+  const editor = useEditor({
     autofocus: true,
+    onCreate: ({ editor }) => {},
     extensions: [...ExtensionKit()],
     editorProps: {
       attributes: {
@@ -31,12 +38,14 @@ const useEditor = ({ defaultContent, onUpdate }: IProps) => {
         onUpdate(editor);
       }
     },
-    content: defaultContent,
   });
 
-  return editor;
+  const characterCount = editor?.storage.characterCount || {
+    characters: () => 0,
+    words: () => 0,
+  };
+
+  window.editor = editor;
+
+  return { editor, characterCount };
 };
-
-export { useEditor };
-
-<div className="list-none"></div>;
