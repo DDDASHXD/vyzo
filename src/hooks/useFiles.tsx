@@ -20,6 +20,11 @@ export interface iFile {
   tags?: iTag[];
   optimistic?: boolean;
   type?: string;
+  fileName?: string;
+  path?: string;
+  size?: number;
+  url?: string;
+  fileType?: string;
 }
 
 const useFiles = () => {
@@ -46,12 +51,16 @@ const useFiles = () => {
   const newFile = async (name: string, parent: string) => {
     try {
       setFiles([...files, { name, parent, optimistic: true }]);
-      await axios.post<any>(`${process.env.NEXT_PUBLIC_API_URL}/files/file`, {
-        name,
-        parent,
-        token: localStorage.getItem("token"),
-      });
+      const res = await axios.post<any>(
+        `${process.env.NEXT_PUBLIC_API_URL}/files/note`,
+        {
+          name,
+          parent,
+          token: localStorage.getItem("token"),
+        }
+      );
       getFiles(parent);
+      setCurrentFile(res.data.file);
     } catch (error) {
       console.error(error);
       toast.error("An error ocurred. Please try again later");
@@ -74,7 +83,38 @@ const useFiles = () => {
     }
   };
 
-  return { getFiles, newFile, deleteFile, files, currentFile, setCurrentFile };
+  const renameFile = async (
+    id: string,
+    value: string,
+    currentFolder: string
+  ) => {
+    try {
+      const index = files.findIndex((file) => file._id === id);
+      let newFiles = files;
+      newFiles[index].name = value;
+      setFiles(newFiles);
+      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/files/file/rename`, {
+        id,
+        value,
+        token: localStorage.getItem("token"),
+      });
+    } catch (error) {
+      console.error(error);
+      toast.error("An error ocurred. Please try again later");
+    } finally {
+      getFiles(currentFolder);
+    }
+  };
+
+  return {
+    getFiles,
+    newFile,
+    deleteFile,
+    files,
+    currentFile,
+    setCurrentFile,
+    renameFile,
+  };
 };
 
 export default useFiles;

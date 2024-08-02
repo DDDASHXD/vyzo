@@ -14,6 +14,7 @@ import {
   ListChecks,
   ListOrderedIcon,
   Pin,
+  Share,
   Underline,
 } from "lucide-react";
 import { EditorContent } from "@tiptap/react";
@@ -26,8 +27,20 @@ import { cn } from "@/lib/utils";
 import { Toggle } from "@/components/ui/toggle";
 import { Button } from "./button";
 import { ContentItemMenu } from "../menus/ContentItemMenu/ContentItemMenu";
+import { iFileviewerProps } from "../fileviewers/fileviewer";
+import Topbar from "../fileviewers/topbar";
+import TopbarButton from "../fileviewers/TopbarButton";
+import {
+  DropdownMenuContent,
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuItem,
+} from "./dropdown-menu";
+import { Badge } from "./badge";
 
-const Editor = () => {
+const Editor = ({ fullscreen, setFullscreen }: iFileviewerProps) => {
   const { currentFile, getFiles, currentFolder } =
     React.useContext(ApplicationContext);
   const [formatMenuActive, setFormatMenuActive] = React.useState(false);
@@ -70,8 +83,80 @@ const Editor = () => {
     }
   }, [currentFile]);
 
+  const exportFile = async (type: string) => {
+    let mimeType = "";
+    let text = "";
+    let name = currentFile?.name!;
+
+    switch (type) {
+      case "markdown":
+        mimeType = "text/markdown";
+        text = editor?.storage.markdown.getMarkdown();
+        name = name + ".md";
+        break;
+      case "html":
+        mimeType = "text/html";
+        text = editor?.getHTML()!;
+        name = name + ".html";
+      default:
+        toast("No type provided");
+    }
+
+    const blob = new Blob([text], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.style.display = "none";
+    a.href = url;
+    a.download = name;
+
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   return (
-    <div className="flex flex-col h-full overflow-scroll relative">
+    <div className="flex flex-col h-full relative bg-background">
+      <Topbar
+        fullscreen={fullscreen}
+        setFullscreen={(e) => setFullscreen(e)}
+        customExport={[
+          <DropdownMenu>
+            <DropdownMenuTrigger>
+              <TopbarButton>
+                <Share />
+              </TopbarButton>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuLabel>Export</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => exportFile("markdown")}>
+                Markdown
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className="flex items-center gap-5 justify-between"
+                onClick={() => exportFile("html")}
+              >
+                HTML
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                disabled
+                className="flex items-center gap-5 justify-between"
+              >
+                Plaintext
+                <Badge className="text-xs">Coming soon</Badge>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                disabled
+                className="flex items-center gap-5 justify-between"
+              >
+                PDF
+                <Badge className="text-xs">Coming soon</Badge>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>,
+        ]}
+      />
       {/* Trigger */}
       <div
         className="absolute h-20 w-full bottom-0 text-muted-foreground flex items-center justify-end p-5"
@@ -244,9 +329,16 @@ const Editor = () => {
           </Button>
         </div>
       </div>
-      <div className="flex h-full overflow-scroll p-5 pl-20">
-        <EditorContent editor={editor} className="w-full" />
-        {editor && <ContentItemMenu editor={editor} />}
+      <div className="w-full h-full overflow-scroll">
+        <div className="flex h-full p-5 w-full max-w-screen-md mx-auto mb-10">
+          <EditorContent
+            editor={editor}
+            className={cn("w-full h-max pb-20", {
+              "pb-24": formatMenuActive,
+            })}
+          />
+          {editor && <ContentItemMenu editor={editor} />}
+        </div>
       </div>
     </div>
   );

@@ -34,6 +34,7 @@ interface iApplicationContextProps {
   files: iFile[];
   setCurrentFile: iFile | null;
   currentFile: iFile | null;
+  renameFile: (id: string, value: string, currentFolder: string) => void;
 
   beginDrag: (e: any, props: iDragProps) => void;
   dragged: iFile | iFolder | null;
@@ -66,6 +67,7 @@ export const ApplicationContext = React.createContext<iApplicationContextProps>(
     files: null,
     setCurrentFile: (file) => {},
     currentFile: null,
+    renameFile: (id, value, currentFolder) => {},
 
     beginDrag: (e, props) => {},
     dragged: null,
@@ -97,8 +99,15 @@ export const ApplicationProvider: React.FC = ({ children }) => {
 
   const { beginDrag, dragged, dragging } = UseDND();
 
-  const { getFiles, newFile, deleteFile, files, currentFile, setCurrentFile } =
-    useFiles();
+  const {
+    getFiles,
+    newFile,
+    deleteFile,
+    files,
+    currentFile,
+    setCurrentFile,
+    renameFile,
+  } = useFiles();
 
   return (
     <ApplicationContext.Provider
@@ -126,6 +135,7 @@ export const ApplicationProvider: React.FC = ({ children }) => {
         setCurrentFile,
         files,
         currentFile,
+        renameFile,
 
         beginDrag,
         dragged,

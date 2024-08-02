@@ -9,9 +9,11 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
+import FileViewer from "@/components/fileviewers/fileviewer";
+import { cn } from "@/lib/utils";
 
 const Index = () => {
-  const { getUser } = React.useContext(ApplicationContext);
+  const { getUser, currentFile } = React.useContext(ApplicationContext);
   React.useEffect(() => {
     getUser();
   }, []);
@@ -26,16 +28,20 @@ const Index = () => {
           className="flex flex-col h-full w-full bg-background border-t border-t-border border-l border-l-border rounded-tl-3xl overflow-hidden"
         >
           <ResizablePanel
-            className="min-h-[100px] max-h-[300px]"
-            defaultSize={10}
+            className={cn("max-h-[500px]", {
+              "max-h-full": !currentFile,
+            })}
+            defaultSize={currentFile ? 20 : 100}
             onResize={(e) => console.log(e)}
           >
             <FileBrowser />
           </ResizablePanel>
           <ResizableHandle />
-          <ResizablePanel>
-            <Editor />
-          </ResizablePanel>
+          {currentFile && (
+            <ResizablePanel>
+              <FileViewer />
+            </ResizablePanel>
+          )}
         </ResizablePanelGroup>
       </div>
     </div>

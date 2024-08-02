@@ -56,6 +56,8 @@ const useEditor = ({ defaultContent, onUpdate }: IProps) => {
         nested: true,
         HTMLAttributes: {
           class: "list-none flex gap-2",
+          style:
+            "list-style: none; display: flex; gap: 10px; align-items: center;",
         },
       }),
       StarterKit.configure({
@@ -73,7 +75,7 @@ const useEditor = ({ defaultContent, onUpdate }: IProps) => {
       }),
       HorizontalRule.configure({
         HTMLAttributes: {
-          class: "border bg-border w-full h-[1px]",
+          class: "border bg-border w-full h-[1px] mx-12 px-12",
         },
       }),
       CodeBlockLowlight.configure({

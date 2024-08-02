@@ -2,10 +2,18 @@ import React from "react";
 import { ApplicationContext } from "@/providers/ApplicationProvider";
 import { Button } from "@/components/ui/button";
 import { File, Folder } from "lucide-react";
+import { toast } from "sonner";
 
 const Update = () => {
-  const { getFiles, currentFolder, getFolders, dragged, dragging } =
-    React.useContext(ApplicationContext);
+  const {
+    getFiles,
+    currentFolder,
+    getFolders,
+    dragged,
+    dragging,
+    setCurrentFile,
+    currentFile,
+  } = React.useContext(ApplicationContext);
   const [coords, setCoords] = React.useState({ x: 0, y: 0 });
   const [moving, setMoving] = React.useState(false);
 
@@ -36,7 +44,7 @@ const Update = () => {
     if (dragging) {
       moveTimeout = setTimeout(() => {
         setMoving(true);
-      }, 200);
+      }, 300);
     } else {
       setMoving(false);
     }
@@ -45,6 +53,11 @@ const Update = () => {
       clearTimeout(moveTimeout);
     };
   }, [dragging]);
+
+  React.useEffect(() => {
+    //@ts-expect-error
+    if (currentFolder) setCurrentFile(null);
+  }, [currentFolder]);
 
   return (
     <>

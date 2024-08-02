@@ -70,6 +70,10 @@
   height: 0;
 }
 
+.tiptap > * {
+  @apply ml-14 mr-14;
+}
+
 .tiptap {
   > * + * {
     margin-top: 0.75em !important;
@@ -226,4 +230,9 @@
       font-weight: 700;
     }
   }
+}
+
+a {
+  list-style: none;
+  items
 }
