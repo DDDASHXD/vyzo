@@ -1,3 +1,4 @@
+import { getSettings, setSettings } from "@/lib/settings";
 import axios from "axios";
 import React from "react";
 import { toast } from "sonner";
@@ -16,6 +17,15 @@ export interface iFolder {
 const useFolders = () => {
   const [folders, setFolders] = React.useState<iFolder[]>([]);
   const [currentFolder, setCurrentFolder] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    let settings = getSettings();
+
+    if (settings && settings.persistence) {
+      settings.persistence.folder = currentFolder;
+      setSettings(settings);
+    }
+  }, [currentFolder]);
 
   const getFolders = async () => {
     try {

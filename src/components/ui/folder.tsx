@@ -25,6 +25,18 @@ import { Input } from "./input";
 import { Draggable, Droppable } from "react-beautiful-dnd";
 import axios from "axios";
 import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
 interface iFolderProps {
   folder: iFolder;
   indent: number;
@@ -44,6 +56,7 @@ const Folder = ({ folder, indent, index }: iFolderProps) => {
     dragged,
     getFolders,
     setFolders,
+    breadcrumbs,
   } = React.useContext(ApplicationContext);
   const [hovered, setHovered] = React.useState(false);
   const [rename, setRename] = React.useState({
@@ -60,6 +73,16 @@ const Folder = ({ folder, indent, index }: iFolderProps) => {
   const createFolderRef = React.useRef<any>(null);
 
   const [folderOpen, setFolderOpen] = React.useState(false);
+
+  const [deleteAlert, setDeleteAlert] = React.useState(false);
+
+  React.useEffect(() => {
+    breadcrumbs.forEach((bc) => {
+      if (bc) {
+        setFolderOpen(true);
+      }
+    });
+  }, [breadcrumbs]);
 
   const hasParentWithID = (element: any, targetID: string) => {
     while (element) {
@@ -155,97 +178,122 @@ const Folder = ({ folder, indent, index }: iFolderProps) => {
       onDrag={(e) => console.log(e)}
       id={folder._id}
     >
-      <ContextMenu>
-        <ContextMenuTrigger asChild>
-          <Button
-            className={cn(
-              "justify-start hover:bg-background/50 relative h-max py-2 border border-transparent w-full",
-              {
-                "border-border": folder._id === currentFolder,
-                "bg-black/20 hover:bg-black/20": hovered,
-              }
-            )}
-            style={{ paddingLeft: indent }}
-            variant={folder._id === currentFolder ? "outline" : "ghost"}
-            onClick={() => {
-              setCurrentFolder(folder._id!);
-              setFolderOpen(true);
-            }}
-            onMouseDown={(e) => beginDrag(e, { folder: folder })}
-            onMouseMove={(e) => handleMouseMove(e)}
-            onMouseLeave={(e) => setHovered(false)}
-            onMouseUp={() => handleMouseUp()}
-            ref={folderRef}
-          >
-            <ChevronRight
-              className={cn("text-muted-foreground mr-2 transition-all", {
-                "rotate-90": folderOpen,
-              })}
-              onClick={() =>
-                setTimeout(() => {
-                  setFolderOpen(!folderOpen);
-                }, 1)
-              }
-              size={15}
-            />
-            {folderOpen ? (
-              <FolderOpenIcon size="12" />
-            ) : (
-              <FolderClosed size="12" />
-            )}
-            <span
-              className={cn("ml-2 select-none text-xs", {
-                "hidden opacity-100": rename.active,
-              })}
-            >
-              {folder.name}
-            </span>
-            <Input
-              type="text"
+      <AlertDialog>
+        <ContextMenu>
+          <ContextMenuTrigger asChild>
+            <Button
               className={cn(
-                "hidden h-max border-none focus-visible:ring-transparent bg-transparent",
+                "justify-start hover:bg-background/50 relative h-max py-2 border border-transparent w-full",
                 {
-                  "flex  opacity-100": rename.active,
+                  "border-border": folder._id === currentFolder,
+                  "bg-black/20 hover:bg-black/20": hovered,
                 }
               )}
-              onBlur={() => setRename({ value: folder.name, active: false })}
-              onChange={(e) => setRename({ ...rename, value: e.target.value })}
-              value={rename.value}
-              maxLength={20}
-              onKeyDown={(e) => handleKeyDown(e)}
-              ref={renameRef}
-            />
-          </Button>
-        </ContextMenuTrigger>
-        <ContextMenuContent>
-          <ContextMenuItem
-            className="gap-2"
-            onClick={() => setCreateFolder({ ...createFolder, active: true })}
-          >
-            <FolderIcon size="14" /> New Folder
-          </ContextMenuItem>
-          <ContextMenuSeparator />
-          <ContextMenuItem className="gap-2 ">
-            <Star size="14" />
-            Add to favourites
-          </ContextMenuItem>
-          <ContextMenuItem
-            className="gap-2 "
-            onClick={() => setRename({ value: folder.name, active: true })}
-          >
-            <TextCursorInput size="14" />
-            Rename
-          </ContextMenuItem>
-          <ContextMenuSeparator />
-          <ContextMenuItem
-            className="gap-2 text-destructive"
-            onClick={() => deleteFolder(folder._id!)}
-          >
-            <Trash size="14" />
-            Delete
-          </ContextMenuItem>
-        </ContextMenuContent>
-      </ContextMenu>
+              style={{ paddingLeft: indent }}
+              variant={folder._id === currentFolder ? "outline" : "ghost"}
+              onClick={() => {
+                setCurrentFolder(folder._id!);
+                setFolderOpen(true);
+              }}
+              onMouseDown={(e) => beginDrag(e, { folder: folder })}
+              onMouseMove={(e) => handleMouseMove(e)}
+              onMouseLeave={(e) => setHovered(false)}
+              onMouseUp={() => handleMouseUp()}
+              ref={folderRef}
+            >
+              <ChevronRight
+                className={cn("text-muted-foreground mr-2 transition-all", {
+                  "rotate-90": folderOpen,
+                })}
+                onClick={() =>
+                  setTimeout(() => {
+                    setFolderOpen(!folderOpen);
+                  }, 1)
+                }
+                size={15}
+              />
+              {folderOpen ? (
+                <FolderOpenIcon size="12" />
+              ) : (
+                <FolderClosed size="12" />
+              )}
+              <span
+                className={cn("ml-2 select-none text-xs", {
+                  "hidden opacity-100": rename.active,
+                })}
+              >
+                {folder.name}
+              </span>
+              <Input
+                type="text"
+                className={cn(
+                  "hidden h-max border-none focus-visible:ring-transparent bg-transparent",
+                  {
+                    "flex  opacity-100": rename.active,
+                  }
+                )}
+                onBlur={() => setRename({ value: folder.name, active: false })}
+                onChange={(e) =>
+                  setRename({ ...rename, value: e.target.value })
+                }
+                value={rename.value}
+                maxLength={20}
+                onKeyDown={(e) => handleKeyDown(e)}
+                ref={renameRef}
+              />
+            </Button>
+          </ContextMenuTrigger>
+          <ContextMenuContent>
+            <ContextMenuItem
+              className="gap-2"
+              onClick={() => setCreateFolder({ ...createFolder, active: true })}
+            >
+              <FolderIcon size="14" /> New Folder
+            </ContextMenuItem>
+            <ContextMenuSeparator />
+            <ContextMenuItem className="gap-2 ">
+              <Star size="14" />
+              Add to favourites
+            </ContextMenuItem>
+            <ContextMenuItem
+              className="gap-2 "
+              onClick={() => setRename({ value: folder.name, active: true })}
+            >
+              <TextCursorInput size="14" />
+              Rename
+            </ContextMenuItem>
+            <ContextMenuSeparator />
+            <AlertDialogTrigger asChild>
+              <ContextMenuItem
+                className="gap-2 text-destructive"
+                // @ts-ignore
+                //onClick={() => deleteFolder(folder._id!)}
+              >
+                <Trash size="14" />
+                Delete
+              </ContextMenuItem>
+            </AlertDialogTrigger>
+          </ContextMenuContent>
+        </ContextMenu>
+
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              If there are files inside this folder, they will all be deleted.
+              Please make sure you save and backup anything important.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setDeleteAlert(false)}>
+              No, don't delete
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={() => deleteFolder(folder._id!)}>
+              Yes, delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
       <Button
         className={cn("justify-start hover:bg-background/50 relative", {
           hidden: !createFolder.active,

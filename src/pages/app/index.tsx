@@ -11,15 +11,54 @@ import {
 } from "@/components/ui/resizable";
 import FileViewer from "@/components/fileviewers/fileviewer";
 import { cn } from "@/lib/utils";
+import Search from "@/components/ui/search";
+import { getSettings, setSettings } from "@/lib/settings";
 
 const Index = () => {
-  const { getUser, currentFile } = React.useContext(ApplicationContext);
+  const [defaultSize, setDefaultSize] = React.useState(20);
+  const { getUser, currentFile, setCurrentFile, setCurrentFolder } =
+    React.useContext(ApplicationContext);
   React.useEffect(() => {
     getUser();
   }, []);
 
+  React.useEffect(() => {
+    let settings = getSettings();
+
+    if (settings) {
+      setDefaultSize(settings.layout.horizontalSize);
+
+      if (settings.persistence && settings.persistence.file) {
+        setCurrentFolder(settings.persistence.file.parent);
+        setTimeout(() => {
+          //@ts-ignore
+          setCurrentFile(settings.persistence.file);
+        }, 50);
+        return;
+      }
+
+      if (settings.persistence && settings.persistence.folder) {
+        setCurrentFolder(settings.persistence.folder);
+        return;
+      }
+    }
+  }, []);
+
+  const handleHorizontalResize = (e: number) => {
+    if (currentFile) {
+      console.log(e);
+      let settings = getSettings();
+      if (settings) {
+        setDefaultSize(e);
+        settings.layout.horizontalSize = e;
+        setSettings(settings);
+      }
+    }
+  };
+
   return (
     <div className="w-full flex flex-col h-screen bg-muted">
+      <Search />
       <MenuBar />
       <div className="flex h-full">
         <Sidebar />
@@ -31,8 +70,8 @@ const Index = () => {
             className={cn("max-h-[500px]", {
               "max-h-full": !currentFile,
             })}
-            defaultSize={currentFile ? 20 : 100}
-            onResize={(e) => console.log(e)}
+            defaultSize={currentFile ? defaultSize : 100}
+            onResize={(e) => handleHorizontalResize(e)}
           >
             <FileBrowser />
           </ResizablePanel>

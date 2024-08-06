@@ -24,6 +24,8 @@ const UserMenu = () => {
       <UserDropdown />
       <Button
         className="justify-between text-muted-foreground"
+        // @ts-ignore - This is saying that ".click()" doesn't exist. It does. Fuck typescript.
+        onClick={() => document.querySelector("#open-search")!.click()}
         variant={"ghost"}
       >
         <div className="flex gap-2 items-center text-sm">

@@ -1,15 +1,7 @@
-import React, { useState, useEffect } from "react";
-import { Tree } from "primereact/tree";
+import React from "react";
 
-export default function BasicDemo() {
-  const [nodes, setNodes] = useState();
+const Index = () => {
+  return <div>Index</div>;
+};
 
-  return (
-    <div className="card flex justify-content-center">
-      <Tree
-        value={[{ label: "Whoop", children: [{ label: "whaap" }] }]}
-        className="w-full md:w-30rem"
-      />
-    </div>
-  );
-}
+export default Index;

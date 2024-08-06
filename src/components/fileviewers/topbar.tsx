@@ -6,12 +6,14 @@ import { iFile } from "@/hooks/useFiles";
 import Link from "next/link";
 import axios from "axios";
 import TopbarButton from "./TopbarButton";
+import { cn } from "@/lib/utils";
 
 interface iTopbarProps {
   exportFunction?: any;
   fullscreen: boolean;
   setFullscreen: (fullscreen: boolean) => void;
   customExport?: any[];
+  className?: string;
 }
 
 const Topbar = ({
@@ -19,11 +21,19 @@ const Topbar = ({
   fullscreen,
   setFullscreen,
   customExport,
+  className,
 }: iTopbarProps) => {
   const { setCurrentFile, currentFile } = React.useContext(ApplicationContext);
 
   return (
-    <div className="bg-background border-b px-5 py-1 flex items-center justify-end gap-1">
+    <div
+      className={cn(
+        "bg-background border-b px-5 py-1 flex items-center justify-end gap-1",
+        {
+          className,
+        }
+      )}
+    >
       {customExport &&
         customExport.map((btn) => {
           return btn;

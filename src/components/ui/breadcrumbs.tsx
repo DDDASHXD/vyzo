@@ -17,35 +17,19 @@ import { Button } from "./button";
 import { FolderIcon } from "lucide-react";
 
 const Breadcrumbs = () => {
-  const { currentFile, currentFolder, setCurrentFile, setCurrentFolder } =
-    React.useContext(ApplicationContext);
-  const [breadcrumbs, setBreadcrumbs] = React.useState<any>([]);
-
-  const getBreadcrumbs = async () => {
-    try {
-      const res = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/breadcrumbs`,
-        {
-          token: localStorage.getItem("token"),
-          folderId: currentFolder ? currentFolder : null,
-        }
-      );
-
-      let path = res.data.path;
-      if (currentFile) {
-        path.push(currentFile);
-      }
-
-      setBreadcrumbs(path);
-      console.log(path);
-    } catch (error) {
-      console.error(error);
-      toast.error("Error while getting breadcrumbs");
-    }
-  };
+  const {
+    currentFile,
+    currentFolder,
+    setCurrentFile,
+    setCurrentFolder,
+    getBreadcrumbs,
+    breadcrumbs,
+  } = React.useContext(ApplicationContext);
 
   React.useEffect(() => {
-    getBreadcrumbs();
+    if (currentFolder && currentFile) {
+      getBreadcrumbs(currentFolder!, currentFile!);
+    }
   }, [currentFolder, currentFile]);
   return (
     <Breadcrumb>

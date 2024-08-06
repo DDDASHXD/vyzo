@@ -1,3 +1,4 @@
+import { getSettings, setSettings } from "@/lib/settings";
 import axios from "axios";
 import React from "react";
 import { toast } from "sonner";
@@ -30,6 +31,15 @@ export interface iFile {
 const useFiles = () => {
   const [files, setFiles] = React.useState<iFile[]>([]);
   const [currentFile, setCurrentFile] = React.useState<iFile | null>(null);
+
+  React.useEffect(() => {
+    let settings = getSettings();
+
+    if (settings && settings.persistence) {
+      settings.persistence.file = currentFile;
+      setSettings(settings);
+    }
+  }, [currentFile]);
 
   const getFiles = async (currentFolder: string) => {
     try {

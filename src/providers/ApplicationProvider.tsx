@@ -8,6 +8,7 @@ import type { iFolder } from "@/hooks/useFolders";
 import { iFile } from "@/hooks/useFiles";
 import UseDND from "@/hooks/UseDND";
 import { iDragProps } from "@/hooks/UseDND";
+import useBreadcrumbs from "@/hooks/useBreadcrumbs";
 
 interface iApplicationContextProps {
   user: any;
@@ -39,6 +40,10 @@ interface iApplicationContextProps {
   beginDrag: (e: any, props: iDragProps) => void;
   dragged: iFile | iFolder | null;
   dragging: boolean;
+
+  getBreadcrumbs: (currentFolder: string, currentFile: iFile) => void;
+  breadcrumbs: any[];
+  setBreadcrumbs: (breadcrumbs: any[]) => void;
 }
 
 export const ApplicationContext = React.createContext<iApplicationContextProps>(
@@ -72,6 +77,10 @@ export const ApplicationContext = React.createContext<iApplicationContextProps>(
     beginDrag: (e, props) => {},
     dragged: null,
     dragging: null,
+
+    getBreadcrumbs: (currentFolder, currentFile) => {},
+    breadcrumbs: null,
+    setBreadcrumbs: (breadcrumbs) => {},
   }
 );
 
@@ -109,6 +118,8 @@ export const ApplicationProvider: React.FC = ({ children }) => {
     renameFile,
   } = useFiles();
 
+  const { getBreadcrumbs, breadcrumbs, setBreadcrumbs } = useBreadcrumbs();
+
   return (
     <ApplicationContext.Provider
       value={{
@@ -140,6 +151,10 @@ export const ApplicationProvider: React.FC = ({ children }) => {
         beginDrag,
         dragged,
         dragging,
+
+        setBreadcrumbs,
+        getBreadcrumbs,
+        breadcrumbs,
       }}
     >
       {children}
